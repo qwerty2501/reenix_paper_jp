@@ -43,40 +43,40 @@ Rustのシンタックスも同様だが、ほかのCライクなプログラミ
 /// (‘Ord‘ traitを実装すること) listで渡され、要素をソートしたソート済みlistを返す。 
 /// この過程のlistはmutableで変更可能であると言える。  
 pub fn quicksort <T: Ord>(mut lst: Vec<T>) -> Vec<T> {   
-    // ピボットから要素を取り出し、listが空なら何も返さない(そしてelse句へ行く)。   
-    // そうでなければlistから最初の要素を取り除き、返す。  
-    if let Some(pivot) = lst.pop() {   
-        // ピボット周辺のlistを分ける。listを反復する(into_iter function)そして二つのlistに分ける。   
-        // パーティション関数は二つのlistを返す。1番目のlistは全ての要素が状態がすべてtrueのもの、2番目の　　
-        // listは全てfalseのものである。     
-        let (less, more): (Vec<_>, Vec<_>) = lst.into_iter().partition(|x| x < &pivot); 　　
-        // ピボットより小さいlistの半分を再帰的にソートする。これはいずれ返されるlistとなる。  
-        let mut res = quicksort(less);   
-        // ソート済みのlistの半分の小さい方の最後の要素をピボットにする。これは'res'listにピボットを追加することである。
-        res.push(pivot);   
-        // 半分に分けた大きい方のlistをソートし、ソート済みの小さい方のlistとピボットに追加する。     
-        // extendは'res'listに 与えられたlistの全てを追加する。
-        res.extend(quicksort(more));   
-        // 現在のソート済みlistを返す。ここではreturnが必要ないことを注意すること。   
-        // 単純にこの行は'res'と書くだけでいい (’;’が必要なことは注意する)   
-        // 関数が最後の式の値を返すのは(このif-elseのように)分岐の最後の値(Vec<T>)を取ることと同等だろう。
-        return res;   
-        } else {   
-        // lst.pop()により、listが返されなかった場合emptyでなくてはならないのでempty list をここに記述する。
-        // returnは必要ではなくこれはブロック内の最後の式とこのブロックがfunction内で最後の式であることを注意すること。   
-        // vec!は標準的なマクロで、Vec<T>を作成する。   
-        vec![]   
-    }   
- }
+  // ピボットから要素を取り出し、listが空なら何も返さない(そしてelse句へ行く)。   
+  // そうでなければlistから最初の要素を取り除き、返す。  
+  if let Some(pivot) = lst.pop() {   
+      // ピボット周辺のlistを分ける。listを反復する(into_iter function)そして二つのlistに分ける。   
+      // パーティション関数は二つのlistを返す。1番目のlistは全ての要素が状態がすべてtrueのもの、2番目の　　
+      // listは全てfalseのものである。     
+      let (less, more): (Vec<_>, Vec<_>) = lst.into_iter().partition(|x| x < &pivot); 　　
+      // ピボットより小さいlistの半分を再帰的にソートする。これはいずれ返されるlistとなる。  
+      let mut res = quicksort(less);   
+      // ソート済みのlistの半分の小さい方の最後の要素をピボットにする。これは'res'listにピボットを追加することである。
+      res.push(pivot);   
+      // 半分に分けた大きい方のlistをソートし、ソート済みの小さい方のlistとピボットに追加する。     
+      // extendは'res'listに 与えられたlistの全てを追加する。
+      res.extend(quicksort(more));   
+      // 現在のソート済みlistを返す。ここではreturnが必要ないことを注意すること。   
+      // 単純にこの行は'res'と書くだけでいい (’;’が必要なことは注意する)   
+      // 関数が最後の式の値を返すのは(このif-elseのように)分岐の最後の値(Vec<T>)を取ることと同等だろう。
+      return res;   
+      } else {   
+      // lst.pop()により、listが返されなかった場合emptyでなくてはならないのでempty list をここに記述する。
+      // returnは必要ではなくこれはブロック内の最後の式とこのブロックがfunction内で最後の式であることを注意すること。   
+      // vec!は標準的なマクロで、Vec<T>を作成する。   
+      vec![]   
+  }   
+}
   
    
- fn main() {   
-    // ソートするlistを作成する。vec!はマクロでリストされた要素のvecを作成する。     
-    let lst = vec![3,1,5,9,2,8,4,2,0,3,12,4,9,0,11];   
-    println!("unsorted: {:?}", lst);   
-    // quicksortを呼び出す。これはlstの所有権を放棄する。   
-    println!("sorted: {:?}", quicksort(lst));   
- }
+fn main() {   
+  // ソートするlistを作成する。vec!はマクロでリストされた要素のvecを作成する。     
+  let lst = vec![3,1,5,9,2,8,4,2,0,3,12,4,9,0,11];   
+  println!("unsorted: {:?}", lst);   
+  // quicksortを呼び出す。これはlstの所有権を放棄する。   
+  println!("sorted: {:?}", quicksort(lst));   
+}
 ```
 
 ## <div style="text-align: center;">**図1**:Rustでのquick sort</div>  
@@ -136,5 +136,6 @@ impl Id for Commenter {
   
 ## <div style="text-align: center;">**図2**:Rustのtraitとtype</div>  
   
-全ての関数内の一般的な式は場合を(1)let変数を除いて変更可能で、図1の14,17行目と40行目のような(2)ループ構造と(3)式または文のあとにセミコロンが置かれる。カーリー括弧に分割されたブロック({})は最後の式の値を使える式であることに注意してほしい。if-elseやmatchブロックは同じような式だ。例として図1でのif-elseブロックは9行目から開始されているVec<T>型の式だ。Rustはブロックで開始し、関数内の最上位の最後の式の値を暗黙的にreturnされている式にすることを採用した(図1内の9行目から開始されるif-elseだ)。が、図1のうちの一つは未だに’return <value>;’の形式をとっている。これは図2の45-47行目のようにmatchの戻り値が関数である場合にも見て取れる。さらに、これは図1の23行目を単純に’res’とプログラムを同じ意味で変えることを意味している。  
+全ての関数内の一般的な式は場合を(1)let変数を除いて変更可能で、図1の14,17行目と40行目のような(2)ループ構造と(3)式または文のあとにセミコロンが置かれる。カーリー括弧に分割されたブロック({})は最後の式の値を使える式であることに注意してほしい。if-elseやmatchブロックは同じような式だ。例として図1でのif-elseブロックは9行目から開始されているVec<T>型の式だ。Rustはブロックで開始し、関数内の最上位の最後の式の値を暗黙的にreturnされている式にすることを採用した(図1内の8行目から開始されるif-elseだ)。が、図1のうちの一つは未だに’return <value>;’の形式をとっている。これは図2の45-47行目のようにmatchの戻り値が関数である場合にも見て取れる。さらに、これは図1の23行目を単純に’res’とプログラムを同じ意味で変えることを意味している。  
   
+他に顕著なCとの違いとしては、Rustが既定で完全なimmutableであることだ。オブジェクトをmutableにするには図1の14行目のようにmutで宣言しなければならない。これと同じように関数の引数も図1の5行目の第一引数のようにmutを記述しなければならない。この延長でポインタも既定でimmutableになっていて、mutableに使用するには&mutで宣言されなければならない。  
