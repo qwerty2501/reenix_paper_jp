@@ -29,9 +29,112 @@ Weenix OSはx86ベースの教育用OSとして1998年にブラウンのCS167 OS
   
 ## 1.2 Rust言語  
   
-Rust言語は相対的に新しいシステムプログラミング言語で、Mozilla Foundationにより作られている。Rustは一般的に小さく高いパフォーマンスの低レベル層や組み込みプログラミング環境としてのCを使いやすく置き換えるために設計された。Mozilla FoundationはRustを使用してRustコンパイラ(Rustc)やServoと呼ばれる実験的なウェブブラウザといったいくつかの公式プロジェクトにRustを使用している。それはまた、Mozillaの有名なFirefoxブラウザをRust実装し始めることを近い将来に計画している。Rustは現在Github上で開発いる。プロジェクトは非常に人気で開かれており、千人のコントリビュータがいますがそのほとんどはMozillaと関係がない。  
+[Rust](http://www.rust-lang.org)言語は相対的に新しいシステムプログラミング言語で、Mozilla Foundationにより作られている。Rustは一般的に小さく高いパフォーマンスの低レベル層や組み込みプログラミング環境としてのCを使いやすく置き換えるために設計された。Mozilla FoundationはRustを使用してRustコンパイラ(Rustc)やServoと呼ばれる実験的なウェブブラウザといったいくつかの公式プロジェクトにRustを使用している。それはまた、Mozillaの有名なFirefoxブラウザをRust実装し始めることを近い将来に計画している。Rustは現在[Github](https://github.com/rust-lang/rust)上で開発いる。プロジェクトは非常に人気で開かれており、千人のコントリビュータがいますがそのほとんどはMozillaと関係がない。  
 Rust自身は手続き指向型プログラミング言語でCのようなシンタックスになっている。それは包括的な型システムや、データ"ライフタイム"システムとメモリ確保のための小さなランタイムとコンパイル時のスレッド安全性を採用している。具体的にRustはデータが他のオブジェクトによって使用されたときに予想外の変更されないことを保障するために所有権とライフタイム追跡システムを使用している。加えて、ライフタイム追跡システムはdanglingポインタができない言語を保障するために使用している。Rustのランタイムは分離可能なたくさんのパーツで構成されている。それはシンプルなアウトオブメモリもしくは致命的なエラーを回復する、求められた(そして最も基礎的な)機能だ。その最たる例の内にReenixが含まれていて、ヒープメモリの確保のためのインターフェースを提供する。ランタイムの他のすべての機能はOSの実行、ディスク入出力、プロセス間通信そしてスレッド作成、そのたもろもろを一貫性のあるインターフェースとして提供するためにある。
 
 ## 1.2.1 シンタックスとセマンティクス  
   
-Rustのシンタックスも同様だが、ほかのCライクなプログラミング言語とは少し違う。言語機能を説明するために図を使用して説明しよう図1にはRustでの基礎的なクイックソート実装が含まれている。
+Rustのシンタックスも同様だが、ほかのCライクなプログラミング言語とは少し違う。言語機能を説明するために図を使用して説明しよう図1にはRustでの基礎的なクイックソート実装が含まれている。Rustのシンタックスとセマンティクスのすべての詳細はオンライン上の[doc.rust-lang.org](http://doc.rust-lang.org/reference.html)で見つけることができる。  
+最も顕著な違いはRustには式と文にいくつかの違いがみられるということだ。Rustの式ではいくつかのコード片がyieldな値であることだ。文について、ほかの手によって値が作られることはない。  
+  
+```rust
+/// 基本的なクイックソート実装  
+/// 型ジェネリッククイックソート。 ‘T‘はソート対象の型で全体を順序付けなければならない。
+/// (‘Ord‘ traitを実装すること) listで渡され、要素をソートしたソート済みlistを返す。 
+/// この過程のlistはmutableで変更可能であると言える。  
+pub fn quicksort <T: Ord>(mut lst: Vec<T>) -> Vec<T> {   
+    // ピボットから要素を取り出し、listが空なら何も返さない(そしてelse句へ行く)。   
+    // そうでなければlistから最初の要素を取り除き、返す。  
+    if let Some(pivot) = lst.pop() {   
+        // ピボット周辺のlistを分ける。listを反復する(into_iter function)そして二つのlistに分ける。   
+        // パーティション関数は二つのlistを返す。1番目のlistは全ての要素が状態がすべてtrueのもの、2番目の　　
+        // listは全てfalseのものである。     
+        let (less, more): (Vec<_>, Vec<_>) = lst.into_iter().partition(|x| x < &pivot); 　　
+        // ピボットより小さいlistの半分を再帰的にソートする。これはいずれ返されるlistとなる。  
+        let mut res = quicksort(less);   
+        // ソート済みのlistの半分の小さい方の最後の要素をピボットにする。これは'res'listにピボットを追加することである。
+        res.push(pivot);   
+        // 半分に分けた大きい方のlistをソートし、ソート済みの小さい方のlistとピボットに追加する。     
+        // extendは'res'listに 与えられたlistの全てを追加する。
+        res.extend(quicksort(more));   
+        // 現在のソート済みlistを返す。ここではreturnが必要ないことを注意すること。   
+        // 単純にこの行は'res'と書くだけでいい (’;’が必要なことは注意する)   
+        // 関数が最後の式の値を返すのは(このif-elseのように)分岐の最後の値(Vec<T>)を取ることと同等だろう。
+        return res;   
+        } else {   
+        // lst.pop()により、listが返されなかった場合emptyでなくてはならないのでempty list をここに記述する。
+        // returnは必要ではなくこれはブロック内の最後の式とこのブロックがfunction内で最後の式であることを注意すること。   
+        // vec!は標準的なマクロで、Vec<T>を作成する。   
+        vec![]   
+    }   
+ }
+  
+   
+ fn main() {   
+    // ソートするlistを作成する。vec!はマクロでリストされた要素のvecを作成する。     
+    let lst = vec![3,1,5,9,2,8,4,2,0,3,12,4,9,0,11];   
+    println!("unsorted: {:?}", lst);   
+    // quicksortを呼び出す。これはlstの所有権を放棄する。   
+    println!("sorted: {:?}", quicksort(lst));   
+ }
+```
+
+## <div style="text-align: center;">**図1**:Rustでのquick sort</div>  
+  
+```rust
+/// トレイト。構造体と列挙体はこれを実装できる。   
+pub trait Id {   
+  /// 要求される関数。 全ての実装するものはこの関数について定義を提供しなければならない。でなければ型チェックで失敗する。  
+  /// ’staticは文字列が静的に確保されていることを要求されているという意味だ。  
+  fn username(&self) -> &’static str;   
+  /// 既定実装付きの関数。返される文字列は少なくともIdが有効な間使用可能でなくてはならない。  
+  /// ’aは返されるstrが少なくとも’self’が使える間使えなくてはならないということを意味する。  
+  /// 型チェックはこれが真であることを保障する。
+  fn screenname <’a>(&’a self, _board: &str) -> &’a str { self.username() }   
+}
+
+  
+/// 構造体。 deriveは与えられたトレイトの規定実装を提供する。   
+/// トレイトはこの方法でのみ実装されるだろう。    
+#[derive(Debug, Eq, PartialEq)]   
+pub struct Account { name: &’static str, msgs: Vec<u64>, }
+
+  
+// Id taritの実装。 
+//既定の実装では’screenname ’が実装する必要ではないことを注意すること。
+impl Id for Account {   
+    fn username(&self) -> &’static str { self.name }   
+}
+
+  
+// Accountに関連する関数を直接実装  
+impl Account {   
+  pub fn get_messages(&self) -> &[u64] { &self.msgs[..] }   
+}
+
+  
+#[derive(Debug, Eq, PartialEq)]   
+pub enum Commenter {   
+  /// データ付き列挙体の値 
+  User(Account),   
+  /// データなしの列挙体の値  
+  Anon,   
+}
+
+  
+/// Idトレイトの実装   
+impl Id for Commenter {   
+  fn username(&self) -> &’static str {   
+    // 値別のアクションを選択する。  
+    match *self {   
+      Commenter::User(ref a) => a.username(),   
+      Commenter::Anon => "Anon",   
+    }   
+  }   
+}
+```  
+  
+## <div style="text-align: center;">**図2**:Rustのtraitとtype</div>  
+  
+全ての関数内の一般的な式は場合を(1)let変数を除いて変更可能で、図1の14,17行目と40行目のような(2)ループ構造と(3)式または文のあとにセミコロンが置かれる。カーリー括弧に分割されたブロック({})は最後の式の値を使える式であることに注意してほしい。if-elseやmatchブロックは同じような式だ。例として図1でのif-elseブロックは9行目から開始されているVec<T>型の式だ。Rustはブロックで開始し、関数内の最上位の最後の式の値を暗黙的にreturnされている式にすることを採用した(図1内の9行目から開始されるif-elseだ)。が、図1のうちの一つは未だに’return <value>;’の形式をとっている。これは図2の45-47行目のようにmatchの戻り値が関数である場合にも見て取れる。さらに、これは図1の23行目を単純に’res’とプログラムを同じ意味で変えることを意味している。  
+  
