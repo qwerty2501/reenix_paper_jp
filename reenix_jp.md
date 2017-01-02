@@ -37,7 +37,7 @@ Rust自身は手続き指向型プログラミング言語でCのようなシン
 Rustのシンタックスも同様だが、ほかのCライクなプログラミング言語とは少し違う。言語機能を説明するために図を使用して説明しよう図1にはRustでの基礎的なクイックソート実装が含まれている。Rustのシンタックスとセマンティクスのすべての詳細はオンライン上の[doc.rust-lang.org](http://doc.rust-lang.org/reference.html)で見つけることができる。  
 最も顕著な違いはRustには式と文にいくつかの違いがみられるということだ。Rustの式ではいくつかのコード片がyieldな値であることだ。文について、ほかの手によって値が作られることはない。  
 
-<pre class="prettyprint linenums:" class="language-rust"> 
+<pre class="prettyprint linenums" class="language-rust"> 
 /// 基本的なクイックソート実装  
 /// 型ジェネリッククイックソート。 ‘T‘はソート対象の型で全体を順序付けなければならない。
 /// (‘Ord‘ traitを実装すること) listで渡され、要素をソートしたソート済みlistを返す。 
