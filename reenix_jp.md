@@ -37,10 +37,46 @@ Rust自身は手続き指向型プログラミング言語でCのようなシン
 Rustのシンタックスも同様だが、ほかのCライクなプログラミング言語とは少し違う。言語機能を説明するために図を使用して説明しよう図1にはRustでの基礎的なクイックソート実装が含まれている。Rustのシンタックスとセマンティクスのすべての詳細はオンライン上の[doc.rust-lang.org](http://doc.rust-lang.org/reference.html)で見つけることができる。  
 最も顕著な違いはRustには式と文にいくつかの違いがみられるということだ。Rustの式ではいくつかのコード片がyieldな値であることだ。文について、ほかの手によって値が作られることはない。  
 
-<pre class=“prettyprint linenums:6”> 
- void main(){
- printf(“Hello, World!\n”);
- }
+<pre class=“prettyprint lang-rust linenums”> 
+/// 基本的なクイックソート実装  
+/// 型ジェネリッククイックソート。 ‘T‘はソート対象の型で全体を順序付けなければならない。
+/// (‘Ord‘ traitを実装すること) listで渡され、要素をソートしたソート済みlistを返す。 
+/// この過程のlistはmutableで変更可能であると言える。  
+pub fn quicksort <T: Ord>(mut lst: Vec<T>) -> Vec<T> {   
+  // ピボットから要素を取り出し、listが空なら何も返さない(そしてelse句へ行く)。   
+  // そうでなければlistから最初の要素を取り除き、返す。  
+  if let Some(pivot) = lst.pop() {   
+    // ピボット周辺のlistを分ける。listを反復する(into_iter function)そして二つのlistに分ける。   
+    // パーティション関数は二つのlistを返す。1番目のlistは全ての要素が状態がすべてtrueのもの、2番目の　　
+    // listは全てfalseのものである。     
+    let (less, more): (Vec<_>, Vec<_>) = lst.into_iter().partition(|x| x < &pivot); 　　
+    // ピボットより小さいlistの半分を再帰的にソートする。これはいずれ返されるlistとなる。  
+    let mut res = quicksort(less);   
+    // ソート済みのlistの半分の小さい方の最後の要素をピボットにする。これは'res'listにピボットを追加することである。
+    res.push(pivot);   
+    // 半分に分けた大きい方のlistをソートし、ソート済みの小さい方のlistとピボットに追加する。     
+    // extendは'res'listに 与えられたlistの全てを追加する。
+    res.extend(quicksort(more));   
+    // 現在のソート済みlistを返す。ここではreturnが必要ないことを注意すること。   
+    // 単純にこの行は'res'と書くだけでいい (’;’が必要なことは注意する)   
+    // 関数が最後の式の値を返すのは(このif-elseのように)分岐の最後の値(Vec<T>)を取ることと同等だろう。
+    return res;   
+  } else {   
+    // lst.pop()により、listが返されなかった場合emptyでなくてはならないのでempty list をここに記述する。
+    // returnは必要ではなくこれはブロック内の最後の式とこのブロックがfunction内で最後の式であることを注意すること。   
+    // vec!は標準的なマクロで、Vec<T>を作成する。   
+    vec![]   
+  }   
+}
+  
+   
+fn main() {   
+  // ソートするlistを作成する。vec!はマクロでリストされた要素のvecを作成する。     
+  let lst = vec![3,1,5,9,2,8,4,2,0,3,12,4,9,0,11];   
+  println!("unsorted: {:?}", lst);   
+  // quicksortを呼び出す。これはlstの所有権を放棄する。   
+  println!("sorted: {:?}", quicksort(lst));   
+}
 </pre> 
 ```rust
 /// 基本的なクイックソート実装  
