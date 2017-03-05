@@ -15,7 +15,7 @@ Advisor: Tom Doeppner
 Reader: Shriram Krishnamurthi  
 Brown University, Department of Computer Science  
 
-# 主題
+# 要旨
   
   この論文はRustでのUnixライクなOSカーネルの実装でわかった成功と失敗の体験を説明するものである。  
   CS167/9のために書かれたWeenix OSの基礎デザインと大量の低レベルな処理をサポートするコードを使って、協調的にスケジュールされた複数のカーネルプロセスをサポートする基本的なカーネル、基本的なデバイスのドライバーと仮想ファイルシステムの端緒を作ることができた。  
