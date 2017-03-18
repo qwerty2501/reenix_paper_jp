@@ -7,7 +7,8 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?autoload=true&amp;skin=desert&amp;lang=rust" defer="defer"></script>
 [ここ](http://scialex.github.io/reenix.pdf)の翻訳になります  
 原文は2015年に書かれたものなので現在のRustの仕様と異なることが書いてある場合があります  
-本文章は[Github](https://github.com/qwerty2501/reenix_paper_jp)で管理されています  
+本文章は[Github](https://github.com/qwerty2501/reenix_paper_jp)で管理されています 　
+この翻訳は7割方間違っているので信用しないでください 
   
   
 # 2 Reenix  
