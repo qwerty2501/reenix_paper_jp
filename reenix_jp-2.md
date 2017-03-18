@@ -10,6 +10,7 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
 本文章は[Github](https://github.com/qwerty2501/reenix_paper_jp)で管理されています 　
 この翻訳は7割方間違っているので信用しないでください 
   
+前:[その１](http://qwerty2501.hatenablog.com/entry/2017/03/18/220248)
   
 # 2 Reenix  
   
